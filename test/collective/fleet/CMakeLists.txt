@@ -36,7 +36,7 @@ if(WITH_NCCL)
     bash_test_modules(
       test_parallel_margin_cross_entropy
       START_BASH
-      ../../legacy_test/dist_test.sh
+      ../../dist_test.sh
       TIMEOUT
       "120"
       LABELS
@@ -54,7 +54,7 @@ if(WITH_NCCL)
       bash_test_modules(
         test_parallel_dygraph_transformer
         START_BASH
-        ../../legacy_test/dist_test.sh
+        ../../dist_test.sh
         LABELS
         "RUN_TYPE=DIST"
         ENVS
@@ -67,7 +67,7 @@ if((WITH_ROCM) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_transformer
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -84,7 +84,7 @@ if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_rnn_dp
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -96,7 +96,7 @@ if(WITH_NCCL)
     bash_test_modules(
       test_parallel_dygraph_mp_layers
       START_BASH
-      ../../legacy_test/dist_test.sh
+      ../../dist_test.sh
       TIMEOUT
       "120"
       LABELS
@@ -112,7 +112,7 @@ if(LOCAL_ALL_ARCH AND (LINUX OR APPLE))
   bash_test_modules(
     test_tcp_store
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -123,7 +123,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_dygraph_sharding_stage3_for_eager
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "350"
     LABELS
@@ -151,7 +151,7 @@ if((WITH_GPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_pipeline_parallel
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "500"
     LABELS
@@ -166,7 +166,7 @@ if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_pipeline_parallel_sync_send
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "300"
     LABELS
@@ -181,7 +181,7 @@ if((WITH_GPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_pipeline_parallel_with_virtual_stage
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "500"
     LABELS
@@ -197,7 +197,7 @@ if((WITH_GPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_pp_adaptor
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "500"
     LABELS
@@ -219,7 +219,7 @@ if(WITH_NCCL)
     bash_test_modules(
       test_parallel_class_center_sample
       START_BASH
-      ../../legacy_test/dist_test.sh
+      ../../dist_test.sh
       TIMEOUT
       "120"
       LABELS
@@ -235,9 +235,9 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_pipeline
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
-    "160"
+    "120"
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -256,7 +256,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_static_model_parallel
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "240"
     LABELS
@@ -271,7 +271,7 @@ if(WITH_NCCL)
     bash_test_modules(
       test_parallel_dygraph_no_sync
       START_BASH
-      ../../legacy_test/dist_test.sh
+      ../../dist_test.sh
       TIMEOUT
       "300"
       LABELS
@@ -286,7 +286,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_dygraph_sharding_stage2
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -300,7 +300,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_control_flow
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "350"
     LABELS
@@ -315,7 +315,7 @@ if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_fleet_lars_meta_optimizer
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -326,13 +326,13 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_hybrid_parallel_inference_helper
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "120"
     LABELS
     "RUN_TYPE=DIST"
     ENVS
-    "NVIDIA_TF32_OVERRIDE=0;PADDLE_DIST_UT_PORT=21234;http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python"
+    "PADDLE_DIST_UT_PORT=21234;http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python"
   )
   set_tests_properties(test_hybrid_parallel_inference_helper PROPERTIES TIMEOUT
                                                                         "120")
@@ -351,12 +351,8 @@ if((WITH_GPU OR WITH_ROCM) AND (LINUX OR WIN32))
 endif()
 if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   py_test_modules(
-    test_recv_save_op
-    MODULES
-    test_recv_save_op
-    ENVS
-    "NVIDIA_TF32_OVERRIDE=0;http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python"
-  )
+    test_recv_save_op MODULES test_recv_save_op ENVS
+    "http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python")
 endif()
 if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   py_test_modules(
@@ -371,7 +367,7 @@ if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_fleet_pipeline_meta_optimizer
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -398,7 +394,7 @@ if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_fleet_raw_program_meta_optimizer
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -409,7 +405,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_sharding_parallel
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "120"
     LABELS
@@ -424,7 +420,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_tensor_parallel
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -439,7 +435,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_dygraph_group_sharded_api_for_eager
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "120"
     LABELS
@@ -467,7 +463,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_unused_variables
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "350"
     LABELS
@@ -494,7 +490,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_no_sync_gradient_check
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "60"
     LABELS
@@ -509,7 +505,7 @@ if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_fleet_pipeline_meta_optimizer_with_recompute
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     LABELS
     "RUN_TYPE=DIST"
     ENVS
@@ -526,7 +522,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_qat
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "120"
     LABELS
@@ -542,7 +538,7 @@ if(WITH_NCCL)
       bash_test_modules(
         test_parallel_dygraph_sparse_embedding
         START_BASH
-        ../../legacy_test/dist_test.sh
+        ../../dist_test.sh
         TIMEOUT
         "200"
         LABELS
@@ -559,7 +555,7 @@ if((WITH_ROCM) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_sparse_embedding
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -575,18 +571,13 @@ if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
     test_fleet_amp_meta_optimizer MODULES test_fleet_amp_meta_optimizer ENVS
     "http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python")
 endif()
-if((WITH_GPU OR WITH_XPU) AND LOCAL_ALL_PLAT)
-  py_test_modules(
-    test_fleet_qat_meta_optimizer MODULES test_fleet_qat_meta_optimizer ENVS
-    "http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python")
-endif()
 if(WITH_NCCL)
   if(${NCCL_VERSION} VERSION_GREATER_EQUAL 2212)
     if((WITH_GPU) AND LOCAL_ALL_PLAT)
       bash_test_modules(
         test_parallel_dygraph_sparse_embedding_over_height
         START_BASH
-        ../../legacy_test/dist_test.sh
+        ../../dist_test.sh
         TIMEOUT
         "150"
         LABELS
@@ -603,7 +594,7 @@ if((WITH_ROCM) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_sparse_embedding_over_height
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "350"
     LABELS
@@ -623,7 +614,7 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_auto_parallel_parallelizer
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "120"
     LABELS
@@ -685,27 +676,27 @@ if(LOCAL_ALL_ARCH AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_ir_pass_pipeline
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
-    "240"
+    "120"
     LABELS
     "RUN_TYPE=DIST"
     ENVS
     "PADDLE_DIST_UT_PORT=21272;http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python"
   )
-  set_tests_properties(test_ir_pass_pipeline PROPERTIES TIMEOUT "240")
+  set_tests_properties(test_ir_pass_pipeline PROPERTIES TIMEOUT "120")
 endif()
 if((WITH_GPU OR WITH_ROCM) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_mnist
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
     "RUN_TYPE=DIST"
     ENVS
-    "NVIDIA_TF32_OVERRIDE=0;PADDLE_DIST_UT_PORT=21274;http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python"
+    "PADDLE_DIST_UT_PORT=21274;http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python"
   )
   set_tests_properties(test_parallel_dygraph_mnist PROPERTIES TIMEOUT "200")
 endif()
@@ -713,7 +704,7 @@ if((WITH_GPU OR WITH_ROCM) AND LOCAL_ALL_PLAT)
   bash_test_modules(
     test_parallel_dygraph_se_resnext
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -757,7 +748,7 @@ if(WITH_NCCL OR WITH_RCCL)
       bash_test_modules(
         test_dist_mnist_dgc_nccl
         START_BASH
-        ../../legacy_test/dist_test.sh
+        ../../dist_test.sh
         LABELS
         "RUN_TYPE=DIST"
         ENVS
@@ -772,7 +763,7 @@ if(WITH_NCCL OR WITH_RCCL)
       bash_test_modules(
         test_dist_se_resnext_dgc
         START_BASH
-        ../../legacy_test/dist_test.sh
+        ../../dist_test.sh
         LABELS
         "RUN_TYPE=DIST"
         ENVS
@@ -785,7 +776,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_auto_checkpoint
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -799,7 +790,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_auto_checkpoint1
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -813,7 +804,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_auto_checkpoint2
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -827,7 +818,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_auto_checkpoint3
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -841,7 +832,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_auto_checkpoint_multiple
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -855,7 +846,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_auto_checkpoint_dist_basic
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -869,7 +860,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_hdfs1
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -883,7 +874,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_hdfs2
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -897,7 +888,7 @@ if(LOCAL_ALL_ARCH AND (LINUX))
   bash_test_modules(
     test_hdfs3
     START_BASH
-    ../../legacy_test/dist_test.sh
+    ../../dist_test.sh
     TIMEOUT
     "200"
     LABELS
@@ -927,16 +918,13 @@ if((WITH_GPU) AND (LINUX))
     test_dygraph_dist_save_load MODULES test_dygraph_dist_save_load ENVS
     "http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python")
   set_tests_properties(test_dygraph_dist_save_load
-                       PROPERTIES TIMEOUT "300" LABELS "RUN_TYPE=DIST")
+                       PROPERTIES TIMEOUT "200" LABELS "RUN_TYPE=DIST")
 endif()
 if((WITH_GPU) AND (LINUX))
   py_test_modules(
-    test_dygraph_save_for_auto_infer
-    MODULES
-    test_dygraph_save_for_auto_infer
+    test_dygraph_save_for_auto_infer MODULES test_dygraph_save_for_auto_infer
     ENVS
-    "NVIDIA_TF32_OVERRIDE=0;http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python"
-  )
+    "http_proxy=;https_proxy=;PYTHONPATH=../..:${PADDLE_BINARY_DIR}/python")
   set_tests_properties(test_dygraph_save_for_auto_infer
                        PROPERTIES TIMEOUT "300" LABELS "RUN_TYPE=DIST")
 endif()

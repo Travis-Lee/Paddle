@@ -36,7 +36,10 @@ void AddLayernormXPUInferMeta(const MetaTensor& x,
                               const MetaTensor& bias,
                               int begin_norm_axis,
                               float epsilon,
-                              MetaTensor* out);
+                              int act_type,
+                              float act_param,
+                              MetaTensor* out,
+                              MetaTensor* out_max);
 
 void Conv1dXPUInferMeta(const MetaTensor& x,
                         const MetaTensor& x_max,
@@ -72,6 +75,26 @@ void Conv2dXPUInferMeta(const MetaTensor& x,
                         DataType out_dtype,
                         MetaTensor* out,
                         MetaTensor* out_max);
+
+void Conv2dPoolingXPUInferMeta(const MetaTensor& x,
+                               const MetaTensor& x_max,
+                               const MetaTensor& filter,
+                               const MetaTensor& filter_max,
+                               const MetaTensor& bias,
+                               const std::vector<int>& paddings,
+                               const std::vector<int>& dilations,
+                               const std::vector<int>& strides,
+                               const std::string& padding_algorithm,
+                               int groups,
+                               int act_type,
+                               float act_param,
+                               DataType out_dtype,
+                               const std::vector<int>& pool2d_paddings,
+                               const std::vector<int>& pool2d_strides,
+                               const std::vector<int>& pool2d_ksize,
+                               bool is_avg,
+                               MetaTensor* out,
+                               MetaTensor* out_max);
 
 void EmbeddingWithEltwiseAddXPUInferMeta(
     const std::vector<const MetaTensor*>& ids,

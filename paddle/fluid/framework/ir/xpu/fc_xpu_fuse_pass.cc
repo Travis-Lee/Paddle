@@ -255,7 +255,8 @@ void FcXPUFusePass::ApplyImpl(ir::Graph* graph) const {
   int found_subgraph_count = 0;
   for (auto mul_type : {"mul", "matmul", "matmul_v2"}) {
     for (auto with_bias : {true, false}) {
-      for (auto with_bn : {true, false}) {
+      // for (auto with_bn : {true, false}) {
+      for (auto with_bn : {false}) {
         for (auto act_type : {
                  "relu",
                  "gelu",

@@ -235,7 +235,11 @@ static void QuantFP32ToIntX(const float* src_ptr,
                             T* dst_ptr,
                             float max_val,
                             int numel) {
-  LOG(FATAL) << "Not support.";
+  //LOG(FATAL) << "Not support.";
+  LOG(FATAL) << "FP32 to int32.";
+  for (int i = 0; i < numel; i++) {
+    dst_ptr[i] = (float)src_ptr[i];
+  }
 }
 
 template <>
@@ -298,6 +302,9 @@ template void PrepareWeight<int8_t>(phi::DenseTensor* weight,
                                     phi::DenseTensor* weight_max,
                                     bool transpose);
 
+template void PrepareWeight<float>(phi::DenseTensor* weight,
+                                    phi::DenseTensor* weight_max,
+                                    bool transpose);
 }  // namespace ir
 }  // namespace framework
 }  // namespace paddle

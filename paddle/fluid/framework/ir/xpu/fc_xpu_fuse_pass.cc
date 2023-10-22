@@ -387,7 +387,9 @@ int FcXPUFusePass::ApplyImpl(ir::Graph* graph,
 
     Node* mul_w_int16 = nullptr;
     Node* mul_w_max = nullptr;
-    PrepareWeight<int16_t>(
+    //PrepareWeight<int16_t>(
+    //PrepareWeight<int32_t>(
+    PrepareWeight<float>(
         graph, scope, block, mul_w, &mul_w_int16, &mul_w_max, !transpose_w);
 
     std::string fc_out_name;

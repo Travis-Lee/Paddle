@@ -229,16 +229,23 @@ static T Fp32ToIntx(const float f, float max) {
   }
   return ret;
 }
-
 template <typename T>
+
 static void QuantFP32ToIntX(const float* src_ptr,
                             T* dst_ptr,
                             float max_val,
                             int numel) {
-  //LOG(FATAL) << "Not support.";
-  LOG(FATAL) << "FP32 to int32.";
+  LOG(FATAL) << "Not support.";
+}
+
+
+template <>
+void QuantFP32ToIntX<int32_t>(const float* src_ptr,
+                              int32_t* dst_ptr,
+                              float max_val,
+                              int numel) {
   for (int i = 0; i < numel; i++) {
-    dst_ptr[i] = (float)src_ptr[i];
+    dst_ptr[i] = Fp32ToIntx<int32_t, 2147483647>(src_ptr[i], max_val);
   }
 }
 

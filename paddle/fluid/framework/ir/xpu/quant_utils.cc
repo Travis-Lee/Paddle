@@ -240,12 +240,12 @@ static void QuantFP32ToIntX(const float* src_ptr,
 
 
 template <>
-void QuantFP32ToIntX<int32_t>(const float* src_ptr,
-                              int32_t* dst_ptr,
+void QuantFP32ToIntX<float>(const float* src_ptr,
+                              float* dst_ptr,
                               float max_val,
                               int numel) {
   for (int i = 0; i < numel; i++) {
-    dst_ptr[i] = Fp32ToIntx<int32_t, 2147483647>(src_ptr[i], max_val);
+    dst_ptr[i] = (float)src_ptr[i];
   }
 }
 

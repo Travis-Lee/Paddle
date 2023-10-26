@@ -288,6 +288,9 @@ int FcXPUFusePass::ApplyImpl(ir::Graph* graph,
                                  with_bn,
                                  act_type);
 
+  int gemm_compute =
+      Has("gemm_compute_precision") ? Get<int>("gemm_compute_precision") : -1;
+
   int found_subgraph_count = 0;
   auto handler = [&](const GraphPatternDetector::subgraph_t& subgraph,
                      Graph* graph) {
@@ -387,9 +390,15 @@ int FcXPUFusePass::ApplyImpl(ir::Graph* graph,
 
     Node* mul_w_int16 = nullptr;
     Node* mul_w_max = nullptr;
-    PrepareWeight<int16_t>(
-        graph, scope, block, mul_w, &mul_w_int16, &mul_w_max, !transpose_w);
-
+    if (gemm_compute == 2) {
+      VLOG(5) << "Fc GEMM Compute Type With INT31";
+      PrepareWeight<float>(
+          graph, scope, block, mul_w, &mul_w_int16, &mul_w_max, !transpose_w);
+    } else {
+      VLOG(5) << "Fc GEMM Compute Type With INT16";
+      PrepareWeight<int16_t>(
+          graph, scope, block, mul_w, &mul_w_int16, &mul_w_max, !transpose_w);
+    }
     std::string fc_out_name;
     if (act_out) {
       fc_out_name = act_out->Name();

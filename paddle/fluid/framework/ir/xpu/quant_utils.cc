@@ -257,6 +257,15 @@ void QuantFP32ToIntX<int8_t>(const float* src_ptr,
     dst_ptr[i] = Fp32ToIntx<int8_t, 127>(src_ptr[i], max_val);
   }
 }
+template <>
+void QuantFP32ToIntX<float>(const float* src_ptr,
+                            float* dst_ptr,
+                            float max_val,
+                            int numel) {
+  for (int i = 0; i < numel; i++) {
+    dst_ptr[i] = (float)src_ptr[i];
+  }
+}
 
 template <typename T>
 void PrepareWeight(phi::DenseTensor* weight,
@@ -294,6 +303,9 @@ void PrepareWeight(phi::DenseTensor* weight,
 template void PrepareWeight<int16_t>(phi::DenseTensor* weight,
                                      phi::DenseTensor* weight_max,
                                      bool transpose);
+template void PrepareWeight<float>(phi::DenseTensor* weight,
+                                   phi::DenseTensor* weight_max,
+                                   bool transpose);
 template void PrepareWeight<int8_t>(phi::DenseTensor* weight,
                                     phi::DenseTensor* weight_max,
                                     bool transpose);

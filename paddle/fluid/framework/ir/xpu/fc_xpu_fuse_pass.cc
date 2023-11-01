@@ -489,7 +489,10 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
   Node* filter_max = nullptr;
   Node* scale_max = nullptr;
   if (op_weights_precision != "int8") {
-    PrepareWeight<float, int16_t>(graph,
+    std::cout<<"==========GEMMMMMMMMMMM===========>"<<std::endl;
+    //PrepareWeight<float, int16_t>(graph,
+    //PrepareWeight<float, int32_t>(graph,
+    PrepareWeight<float, float>(graph,
                                   scope,
                                   block,
                                   mul_w,
@@ -498,6 +501,7 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
                                   !transpose_w,
                                   weight_scale);
   } else {
+    std::cout<<"==========GEMMMMMMMMMMM==INT8 INT8 INT8=========>"<<std::endl;
     PrepareWeight<int8_t, int8_t>(graph,
                                   scope,
                                   block,
@@ -709,6 +713,11 @@ int FcXPUFusePass::ApplyImpl(ir::Graph* graph,
                                  with_bias,
                                  with_bn,
                                  act_type);
+  
+   int gemm_compute =
+      Has("gemm_compute_precision") ? Get<int>("gemm_compute_precision") : -1;
+
+  std::cout<<"gemm_computei=====================================>:"<<gemm_compute<<std::endl;
   auto* scope = param_scope();
   std::unordered_map<std::string, std::vector<float>> var_quant_scales =
       GetQuantInfoFromTheGraph(graph, "has_quant_info", "var_quant_scales");

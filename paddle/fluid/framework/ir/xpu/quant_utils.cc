@@ -242,6 +242,16 @@ static void QuantFP32ToIntX(const float* src_ptr,
 }
 
 template <>
+void QuantFP32ToIntX<float>(const float* src_ptr,
+                              float* dst_ptr,
+                              float max_val,
+                              int numel) {
+  for (int i = 0; i < numel; i++) {
+    dst_ptr[i] = (float)src_ptr[i];//Fp32ToIntx<int32_t, 2147483647>(src_ptr[i], max_val);
+  }
+}
+
+template <>
 void QuantFP32ToIntX<int16_t>(const float* src_ptr,
                               int16_t* dst_ptr,
                               float max_val,
@@ -318,7 +328,7 @@ void ConvertWithoutQuant(phi::DenseTensor* weight,
   if (transpose) {
     Transpose2D(weight);
   }
-  if (std::is_same<T, int8_t>::value || std::is_same<T, int16_t>::value) {
+  if (std::is_same<T,float>::value || std::is_same<T, int8_t>::value || std::is_same<T, int16_t>::value) {
     auto* cpu_ctx = static_cast<phi::CPUContext*>(
         platform::DeviceContextPool::Instance().Get(phi::CPUPlace()));
     int max_ptr_size = weight_scales.empty()
@@ -338,6 +348,12 @@ void ConvertWithoutQuant(phi::DenseTensor* weight,
   }
 }
 
+template void ConvertWithQuant<float, int32_t>(
+    phi::DenseTensor* weight,
+    phi::DenseTensor* weight_max,
+    bool transpose,
+    const std::vector<float>& weight_scales);
+
 template void ConvertWithQuant<float, int16_t>(
     phi::DenseTensor* weight,
     phi::DenseTensor* weight_max,
@@ -355,6 +371,13 @@ template void ConvertWithoutQuant<int8_t>(
     phi::DenseTensor* weight_max,
     bool transpose,
     const std::vector<float>& weight_scales);
+
+template void ConvertWithoutQuant<float>(
+    phi::DenseTensor* weight,
+    phi::DenseTensor* weight_max,
+    bool transpose,
+    const std::vector<float>& weight_scales);
+
 
 bool IsPerTensorQuant(const std::vector<float>& weight_max) {
   bool per_tensor = true;

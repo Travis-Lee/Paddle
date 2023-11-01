@@ -150,7 +150,11 @@ void FcXPUKernel(const Context& ctx,
             DataTypeToString(w.dtype()),
             DataTypeToString(out_dtype)));
       }
-    } else if (w.dtype() == DataType::INT8) {
+    }else if(w.dtype()==DataType::FLOAT32){
+        std::cout<<"Reader Reader Reader Reader===========>"<<std::endl;
+        FC_XPU_KERNEL_IMPL(float, float, float, int32_t);
+    } 
+    else if (w.dtype() == DataType::INT8) {
       if (out_dtype == DataType::FLOAT32) {
         FC_XPU_KERNEL_IMPL(float, int8_t, float, int8_t);
       } else if (out_dtype == DataType::INT8) {

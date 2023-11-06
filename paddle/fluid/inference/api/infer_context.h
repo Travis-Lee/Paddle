@@ -67,6 +67,12 @@ class InferXPUContext : public phi::XPUContext {
                  size_t l3_autotune_size,
                  const phi::Place& place);
 
+  void SetConvAutotuneInfo(std::string conv_autotune_file,
+                 const phi::Place& place);
+  
+  void SetFcAutotuneInfo(std::string fc_autotune_file,
+                 const phi::Place& place);
+  
   void L3CacheAutotune();
 
  private:

@@ -2168,6 +2168,11 @@ bool AnalysisPredictor::ZeroCopyRun() {
                              config_.xpu_config_.l3_ptr,
                              config_.xpu_config_.l3_autotune_size,
                              place_);
+    infer_xpu_ctx->SetConvAutotuneInfo(config_.xpu_config_.conv_autotune_file,
+                             place_);
+    infer_xpu_ctx->SetFcAutotuneInfo(config_.xpu_config_.fc_autotune_file,
+                             place_);
+
   }
 #endif
 

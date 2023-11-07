@@ -359,7 +359,12 @@ void IRPassManager::CreatePasses(Argument *argument,
       if (quant_post_dynamic_weight_precision == 0) {
         pass->Set("quant_post_dynamic_weight_precision ", new int(0));
       }
+    }else if (pass_name == "fc_xpu_fuse_pass") {
+      int gemm_compute_precision = argument->xpu_gemm_compute_precision();
+      pass->Set("gemm_compute_precision", new int(gemm_compute_precision));
+      VLOG(5) << "Fc GEMM Compute Type:" << gemm_compute_precision;
     }
+    
     pre_pass = pass_name;
 
     passes_.emplace_back(std::move(pass));

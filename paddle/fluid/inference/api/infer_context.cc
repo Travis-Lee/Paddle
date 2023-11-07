@@ -136,6 +136,28 @@ void InferXPUContext::SetL3Info(size_t l3_size,
   }
 }
 
+ 
+void InferXPUContext::SetConvAutotuneInfo(std::string conv_autotune_file,
+                                const phi::Place& place) {
+  phi::backends::xpu::XPUDeviceGuard guard(place.GetDeviceId());
+
+  VLOG(5)<<"Conv Autotune File:"<<conv_autotune_file<<std::endl;
+
+  if(!conv_autotune_file.empty()){
+    if(conv_autotune_file=="null"){
+      VLOG(5)<<"Conv autotune file is empty:"<<conv_autotune_file<<std::endl;
+    }else{
+      int ret=0;
+      ret=x_context()->set_option("XPU_CONV_AUTOTUNE_FILE", conv_autotune_file.c_str());
+      VLOG(5)<<"Set conv autotune file RET is:"<<ret;
+      if(ret !=0){
+        VLOG(5)<<"Set conv autotune file is error:";
+      }
+    }
+  }
+}
+
+
 void InferXPUContext::L3CacheAutotune() {
   if (l3_autotune_size_ == 0) return;
   if (holder_map_.empty()) {

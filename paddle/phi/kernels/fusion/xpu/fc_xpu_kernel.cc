@@ -118,7 +118,11 @@ void FcXPUKernel(const Context& ctx,
                  DenseTensor* out,
                  DenseTensor* out_max) {
   if (out_dtype == DataType::FLOAT32) {
-    FC_XPU_KERNEL_IMPL(T, int16_t, float, int16_t);
+   if (w.dtype() == DataType::FLOAT32) {
+      FC_XPU_KERNEL_IMPL(float, float, float, int32_t);
+    } else {
+      FC_XPU_KERNEL_IMPL(T, int16_t, float, int16_t);
+    }
   } else if (out_dtype == DataType::FLOAT16) {
     FC_XPU_KERNEL_IMPL(T, int16_t, dtype::float16, int16_t);
   } else {

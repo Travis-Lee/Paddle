@@ -250,6 +250,15 @@ void QuantFP32ToIntX<int16_t>(const float* src_ptr,
     dst_ptr[i] = Fp32ToIntx<int16_t, 32767>(src_ptr[i], max_val);
   }
 }
+template <>
+void QuantFP32ToIntX<float>(const float* src_ptr,
+                            float* dst_ptr,
+                            float max_val,
+                            int numel) {
+  for (int i = 0; i < numel; i++) {
+    dst_ptr[i] = static_cast<float> src_ptr[i];
+  }
+}
 
 template <>
 void QuantFP32ToIntX<int8_t>(const float* src_ptr,
@@ -318,6 +327,8 @@ void ConvertWithoutQuant(phi::DenseTensor* weight,
   if (transpose) {
     Transpose2D(weight);
   }
+  // if (std::is_same<T, int8_t>::value || std::is_same<T, int16_t>::value ||
+  // std::is_same<T, float>::value ) {
   if (std::is_same<T, int8_t>::value || std::is_same<T, int16_t>::value) {
     auto* cpu_ctx = static_cast<phi::CPUContext*>(
         platform::DeviceContextPool::Instance().Get(phi::CPUPlace()));
@@ -333,8 +344,35 @@ void ConvertWithoutQuant(phi::DenseTensor* weight,
     } else {
       LOG(FATAL) << "weight scales cannot be empty!";
     }
-  } else {
-    LOG(FATAL) << "Only support int8<->int8 and int16<->int16 convert.";
+  }
+  // else {
+  // LOG(FATAL) << "Only support int8<->int8 and int16<->int16 convert.";
+  //}
+
+  if (std::is_same<T, float>::value) {
+    // Convert fp16 to fp32
+    phi::DenseTensor weight_fp32;
+    CastToFp32(weight, &weight_fp32);
+
+    // Find max
+    int max_ptr_size = phi::backends::xpu::get_xpu_max_ptr_size(-1);
+    int size = weight_fp32.numel();
+    auto* weight_data = weight_fp32.data<float>();
+    float max_val = FindMaxAbs(weight_data, size);
+    std::vector<float> max_vec(max_ptr_size, max_val);
+    weight_max->set_type(phi::DataType::FLOAT32);
+    weight_max->Resize({max_ptr_size});
+    auto* cpu_ctx = static_cast<phi::CPUContext*>(
+        platform::DeviceContextPool::Instance().Get(phi::CPUPlace()));
+    memcpy(cpu_ctx->Alloc<float>(weight_max),
+           max_vec.data(),
+           max_ptr_size * sizeof(float));
+
+    // Quant
+    weight->set_type(phi::DataType::FLOAT32);
+    weight->Resize(weight_fp32.dims());
+    QuantFP32ToIntX<float>(
+        weight_data, cpu_ctx->Alloc<float>(weight), max_val, size);
   }
 }
 
@@ -351,6 +389,12 @@ template void ConvertWithQuant<float, int8_t>(
     const std::vector<float>& weight_scales);
 
 template void ConvertWithoutQuant<int8_t>(
+    phi::DenseTensor* weight,
+    phi::DenseTensor* weight_max,
+    bool transpose,
+    const std::vector<float>& weight_scales);
+
+template void ConvertWithoutQuant<float>(
     phi::DenseTensor* weight,
     phi::DenseTensor* weight_max,
     bool transpose,

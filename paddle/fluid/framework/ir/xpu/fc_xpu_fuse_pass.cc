@@ -430,7 +430,8 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
     float* bn_mean_ptr = bn_mean_t->data<float>();
     float* bn_var_ptr = bn_var_t->data<float>();
     auto mean_len = bn_mean_t->numel();
-    auto filter_stride = filter_len / mean_len;
+    auto filter_h = filter_t->dims()[0];
+    auto filter_w = filter_t->dims()[1];
     float epsilon = PADDLE_GET_CONST(float, bn->Op()->GetAttr("epsilon"));
     if (!with_bias) {  // prev node is conv
       PrepareBias(graph, scope, block, bn_bias, &fusion_bias_node);
@@ -447,8 +448,8 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
     if (op_weights_precision != "int8") {
       float* filter_ptr = filter_t->data<float>();
       for (int i = 0; i < mean_len; ++i) {
-        for (int j = 0; j < filter_stride; j++) {
-          filter_ptr[i * filter_stride + j] *= bn_scale_ptr[i];
+        for (int j = 0; j < filter_h; j++) {
+          filter_ptr[j * filter_w + i] *= bn_scale_ptr[i];
         }
       }
     } else {
@@ -463,12 +464,13 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
       }
       for (int i = 0; i < mean_len; i++) {
         if (bn_scale_ptr[i] < 0) {
-          for (int j = 0; j < filter_stride; ++j) {
-            filter_ptr[i * filter_stride + j] *= -1;
+          for (int j = 0; j < filter_h; ++j) {
+            filter_ptr[j * filter_w + i] *= -1;
           }
         }
       }
     }
+
     // recompute bias
     if (!with_bias) {
       for (int i = 0; i < mean_len; ++i) {
@@ -488,8 +490,26 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
   Node* filter_intx = nullptr;
   Node* filter_max = nullptr;
   Node* scale_max = nullptr;
+
+  int gemm_compute =
+      Has("gemm_compute_precision") ? Get<int>("gemm_compute_precision") : -1;
+
+  std::cout << "gemm_compute=========>" << gemm_compute << std::endl;
+
   if (op_weights_precision != "int8") {
-    PrepareWeight<float, int16_t>(graph,
+    std::cout << "no no no int88888888888888888888888888888888" << std::endl;
+    if (gemm_compute != 2) {
+      PrepareWeight<float, int16_t>(graph,
+                                    scope,
+                                    block,
+                                    mul_w,
+                                    &filter_intx,
+                                    &filter_max,
+                                    !transpose_w,
+                                    weight_scale);
+    } else {
+      std::cout << "Gemm Gemm Gemm Gemm is 1" << std::endl;
+      PrepareWeight<float, float>(graph,
                                   scope,
                                   block,
                                   mul_w,
@@ -497,7 +517,9 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
                                   &filter_max,
                                   !transpose_w,
                                   weight_scale);
+    }
   } else {
+    std::cout << "int88888888888888888888888888888888" << std::endl;
     PrepareWeight<int8_t, int8_t>(graph,
                                   scope,
                                   block,
@@ -709,6 +731,12 @@ int FcXPUFusePass::ApplyImpl(ir::Graph* graph,
                                  with_bias,
                                  with_bn,
                                  act_type);
+
+  // int gemm_compute =
+  //   Has("gemm_compute_precision") ? Get<int>("gemm_compute_precision") : -1;
+
+  // std::cout<<"gemm_compute=========>"<<gemm_compute<<std::endl;
+
   auto* scope = param_scope();
   std::unordered_map<std::string, std::vector<float>> var_quant_scales =
       GetQuantInfoFromTheGraph(graph, "has_quant_info", "var_quant_scales");
@@ -770,11 +798,16 @@ int FcXPUFusePass::ApplyImpl(ir::Graph* graph,
     auto filter_data_type =
         scope->FindVar(mul_w->Name())->GetMutable<phi::DenseTensor>()->dtype();
     std::string op_weights_precision = "float32";
+
+    std::cout << "aaaaaaaaaaa\n" << std::endl;
     if (filter_data_type == phi::DataType::INT8) {
+      std::cout << "11111111111111111111\n" << std::endl;
       op_weights_precision = "int8";
     } else if (filter_data_type == phi::DataType::FLOAT16) {
+      std::cout << "22222222222222222222\n" << std::endl;
       op_weights_precision = "float16";
     }
+    std::cout << "bbbbbbbbbbbbb\n" << std::endl;
     VLOG(4) << "FC fusion fuse pass is running on " << op_weights_precision
             << " precision!";
     auto* block = mul->Op()->Block();

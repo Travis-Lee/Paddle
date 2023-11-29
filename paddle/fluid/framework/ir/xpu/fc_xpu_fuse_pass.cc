@@ -534,7 +534,10 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
       Has("quant_post_dynamic_weight_methods")
           ? Get<std::map<std::string, int>>("quant_post_dynamic_weight_methods")
           : default_type;
-
+  for (auto it = quant_post_type.begin(); it != quant_post_type.end(); ++it) {
+    VLOG(5) << "Key:" << it->first;
+    VLOG(5) << "Value:" << it->second;
+  }
   switch (quant_post_type.find("fc")->second) {
     if (op_weights_precision != "int8") {
       case quant_weight_type::int_16_t:

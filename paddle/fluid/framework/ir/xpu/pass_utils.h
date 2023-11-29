@@ -120,7 +120,13 @@ inline std::string FindInputNameByVarName(framework::OpDesc* op,
       if (input_name == searched_name) ret = name;
   return ret;
 }
-
+enum quant_weight_type {
+  int_8_t = 0,
+  int_8_c = 1,
+  int_16_t = 2,
+  int_16_c = 3,
+  int_31_t = 4,
+};
 }  // namespace ir
 }  // namespace framework
 }  // namespace paddle

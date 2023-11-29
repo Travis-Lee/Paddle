@@ -719,26 +719,13 @@ void Conv2dXPUFusePass::CreateFusionWeightsAndBias(
   Node* filter_max = nullptr;
   Node* scale_max = nullptr;
   std::map<std::string, int> default_type;
-  default_type.insert(std::make_pair("conv", -1));
+  default_type.insert(std::make_pair("conv2d", -1));
   auto quant_post_type =
       Has("quant_post_dynamic_weight_methods")
           ? Get<std::map<std::string, int>>("quant_post_dynamic_weight_methods")
           : default_type;
-  for (auto it = quant_post_type.begin(); it != quant_post_type.end(); ++it) {
-    std::cout << "11111111111111111111" << std::endl;
-    std::cout << "Key: " << it->first << ", Value: " << it->second << std::endl;
-    std::cout << "222222222211111111111111111111" << std::endl;
-  }
 
-  enum quant_weight_type {
-    int_8_t = 0,
-    int_8_c = 1,
-    int_16_t = 2,
-    int_16_c = 3,
-    int_31_t = 4,
-  };
-
-  switch (quant_post_type.find("conv")->second) {
+  switch (quant_post_type.find("conv2d")->second) {
     if (op_weights_precision != "int8") {
       case quant_weight_type::int_16_t:
         VLOG(5) << "Use int16 per-tensor weight";

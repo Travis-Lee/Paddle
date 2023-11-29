@@ -535,14 +535,6 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
           ? Get<std::map<std::string, int>>("quant_post_dynamic_weight_methods")
           : default_type;
 
-  enum quant_weight_type {
-    int_8_t = 0,
-    int_8_c = 1,
-    int_16_t = 2,
-    int_16_c = 3,
-    int_31_t = 4,
-  };
-
   switch (quant_post_type.find("fc")->second) {
     if (op_weights_precision != "int8") {
       case quant_weight_type::int_16_t:

@@ -572,10 +572,29 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
                                     !transpose_w,
                                     weight_scale,
                                     true);
+    } else if (quant_post_type.find("fc") != quant_post_type.end() &&
+               quant_post_type.find("fc")->second == 4) {
+      VLOG(5) << "Use int31 per-tensor weight";
+      PrepareWeight<float, float>(graph,
+                                  scope,
+                                  block,
+                                  mul_w_replicated_node,
+                                  &filter_intx,
+                                  &filter_max,
+                                  &scale_max,
+                                  !transpose_w,
+                                  weight_scale,
+                                  true);
+    } else if (quant_post_type.find("fc") != quant_post_type.end() &&
+                   quant_post_type.find("fc")->second == 0 ||
+               quant_post_type.find("fc") != quant_post_type.end() &&
+                   quant_post_type.find("fc")->second == 1) {
+      VLOG(5) << "Unimplemented for int8 post quant";
     } else {
       VLOG(5) << "Unsupported type weight by non-int8!";
     }
   } else {
+    /*
     if (quant_post_type.find("fc") != quant_post_type.end() &&
         quant_post_type.find("fc")->second == 0) {
       VLOG(5) << "Use int8  per-tensor weight";
@@ -605,6 +624,18 @@ void FcXPUFusePass::CreateFusionWeightsAndBias(
     } else {
       VLOG(5) << "Unsupported type weight!";
     }
+    */
+    VLOG(5) << "Use int8 quant weight";
+    PrepareWeight<int8_t, int8_t>(graph,
+                                  scope,
+                                  block,
+                                  mul_w_replicated_node,
+                                  &filter_intx,
+                                  &filter_max,
+                                  &scale_max,
+                                  !transpose_w,
+                                  weight_scale,
+                                  false);
   }
 
   (*fusion_nodes_map)["w"] = filter_intx;
